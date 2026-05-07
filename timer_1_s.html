@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    body { 
+        font-family: sans-serif; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh; 
+        margin: 0; 
+        background: transparent; /* Keep transparent for Slides.com */
+    }
+    
+    #timer { 
+        font-size: 0.75rem; 
+        font-weight: 800;       /* This makes it extra bold */
+        color: #1cEB7b;      /* Replace this hex code with your specific color */
+        text-align: center;
+        letter-spacing: -1px;   /* Optional: makes the numbers tighter */
+    }
+    
+    .table-container {
+        width: 100%;
+        overflow-x: auto; /* Enables horizontal scroll on small screens */
+    }
+
+    .timer-table {
+        width: 15rem;        
+        table-layout: fixed;
+        border-collapse: collapse;
+        font-weight: bold;
+        text-align: center;
+        font-family: sans-serif;
+        white-space: nowrap;
+    }
+    .timer-number {
+        font-size: 1.0rem; /* Larger font for numbers */
+        color: #1cEB7b;
+        font-weight: 800;
+        padding-bottom: 0;
+        text-align: center;
+    }
+    .timer-label {
+        font-size: 0.65rem; /* Smaller font for labels */
+        text-transform: uppercase;
+        color: #1cEB7b;
+        font-weight: 500;
+        padding-top: 0;
+        width: fit-content;
+        text-align: center;
+    }
+    @media screen and (max-width: 480px) {
+        .timer-number { font-size: 1.25rem; }
+        .timer-label { font-size: 0.6rem; }
+    }
+</style>
+</head>
+<body>
+    <div id="timer">Calculating...</div>
+
+    <script>
+        const targetDate = new Date("2038-01-19T03:14:07Z");
+
+        function updateTimer() {
+            const now = new Date();
+            let diff = targetDate - now;
+
+            if (diff <= 0) {
+                document.getElementById("timer").innerHTML = "Event Started!";
+                return;
+            }
+
+            // Use UTC methods for calculations
+            let years = targetDate.getUTCFullYear() - now.getUTCFullYear();
+            let months = targetDate.getUTCMonth() - now.getUTCMonth();
+            let days = targetDate.getUTCDate() - now.getUTCDate();
+
+            // Adjust for negative days/months in the calendar
+            if (days < 0) {
+                months -= 1;
+                // Get last day of previous month
+                let prevMonth = new Date(Date.UTC(targetDate.getUTCFullYear(), targetDate.getUTCMonth(), 0));
+                days += prevMonth.getUTCDate();
+            }
+            if (months < 0) {
+                years -= 1;
+                months += 12;
+            }
+
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML = `
+                <div class="table-container">
+                <table class="timer-table">
+                <tr>
+                    <td class="timer-number">${years}</td>
+                    <td class="timer-number">${months}</td>
+                    <td class="timer-number">${days}</td>
+                    <td class="timer-number">${hours}</td>
+                    <td class="timer-number">${mins}</td>
+                    <td class="timer-number">${secs}</td>
+                </tr>
+                <tr>
+                    <td class="timer-label">years</td>
+                    <td class="timer-label">months</td>
+                    <td class="timer-label">days</td>
+                    <td class="timer-label">hours</td>
+                    <td class="timer-label">mins</td>
+                    <td class="timer-label">secs</td>
+                </tr>
+                </table>
+                </div>`
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
