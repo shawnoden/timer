@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    body { 
+        font-family: sans-serif; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh; 
+        margin: 0; 
+        background: transparent; /* Keep transparent for Slides.com */
+    }
+    
+    #timer { 
+        font-size: 2.2rem; 
+        font-weight: 800;       /* This makes it extra bold */
+        color: #1cEB7b;      /* Replace this hex code with your specific color */
+        text-align: center;
+        letter-spacing: -1px;   /* Optional: makes the numbers tighter */
+    }
+</style>
+</head>
+<body>
+    <div id="timer">Calculating...</div>
+
+    <script>
+        const targetDate = new Date("2038-01-19T03:14:07Z");
+
+        function updateTimer() {
+            const now = new Date();
+            let diff = targetDate - now;
+
+            if (diff <= 0) {
+                document.getElementById("timer").innerHTML = "Event Started!";
+                return;
+            }
+
+            // Use UTC methods for calculations
+            let years = targetDate.getUTCFullYear() - now.getUTCFullYear();
+            let months = targetDate.getUTCMonth() - now.getUTCMonth();
+            let days = targetDate.getUTCDate() - now.getUTCDate();
+
+            // Adjust for negative days/months in the calendar
+            if (days < 0) {
+                months -= 1;
+                // Get last day of previous month
+                let prevMonth = new Date(Date.UTC(targetDate.getUTCFullYear(), targetDate.getUTCMonth(), 0));
+                days += prevMonth.getUTCDate();
+            }
+            if (months < 0) {
+                years -= 1;
+                months += 12;
+            }
+
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML = 
+                `${years} years ${months} months ${days} days ${hours} hours ${mins} mins ${secs} secs`;
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
